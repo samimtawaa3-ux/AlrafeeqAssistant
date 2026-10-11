@@ -19,40 +19,13 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build Simple APK
+      - name: Build APK with Kotlinc
         run: |
           ANDROID_JAR=$(find $ANDROID_HOME/platforms -name "android.jar" | sort -V | tail -n 1)
-          BUILD_TOOLS=$(find $ANDROID_HOME/build-tools -mindepth 1 -maxdepth 1 | sort -V | tail -n 1)
-          
-          mkdir -p bin gen build/apk
-          
-          cat << 'EOF' > AndroidManifest.xml
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-              package="com.alrafeeq.app"
-              android:versionCode="1"
-              android:versionName="1.0">
-              <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34" />
-              <application android:label="الرفيق">
-                  <activity android:name=".MainActivity" android:exported="true">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
+          kotlinc MainActivity.kt -cp "$ANDROID_JAR" -include-runtime -d AlrafeeqAssistant.jar
 
-          kotlinc MainActivity.kt -cp "$ANDROID_JAR" -d bin/
-          $BUILD_TOOLS/aapt package -f -m -J gen -S res -M AndroidManifest.xml -I "$ANDROID_JAR" || true
-          $BUILD_TOOLS/d8 bin/*.class --lib "$ANDROID_JAR" --output .
-          $BUILD_TOOLS/aapt package -f -M AndroidManifest.xml -I "$ANDROID_JAR" -F build/apk/AlrafeeqAssistant.apk
-          
-          cd build/apk
-          $BUILD_TOOLS/aapt add AlrafeeqAssistant.apk ../../classes.dex
-
-      - name: Upload APK
+      - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
-          name: Alrafeeq-APK
-          path: build/apk/AlrafeeqAssistant.apk
+          name: Alrafeeq-App
+          path: AlrafeeqAssistant.jar
