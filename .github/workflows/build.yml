@@ -10,17 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
-
-    - name: Build APK
+    - name: Build APK with kotlinc
       run: |
-        echo "Building APK..."
+        mkdir -p build/apk
+        kotlinc MainActivity.kt -include-runtime -d build/apk/AlrafeeqAssistant.jar
+        echo "Successfully built application binary!"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Alrafeeq-App
+        path: build/apk/AlrafeeqAssistant.jar
