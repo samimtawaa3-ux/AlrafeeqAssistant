@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -16,20 +16,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Compile Kotlin Code with Android Platform
+      - name: Build APK
         run: |
-          # العثور على ملف android.jar داخل الـ SDK
-          ANDROID_JAR=$(find $ANDROID_HOME/platforms -name "android.jar" | sort -V | tail -n 1)
-          echo "Using Android Jar: $ANDROID_JAR"
-          
-          # تجميع ملف الكوتلن باستعمال مكتبات أندرويد
-          kotlinc MainActivity.kt -cp "$ANDROID_JAR" -include-runtime -d AlrafeeqAssistant.jar
+          gradle assembleDebug
 
-      - name: Upload Application
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Alrafeeq-App
-          path: AlrafeeqAssistant.jar
+          name: Alrafeeq-APK
+          path: build/outputs/apk/debug/*.apk
