@@ -16,16 +16,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      - name: Compile Kotlin App
-        run: |
-          ANDROID_JAR=$(find $ANDROID_HOME/platforms -name "android.jar" | sort -V | tail -n 1)
-          kotlinc MainActivity.kt -cp "$ANDROID_JAR" -include-runtime -d AlrafeeqAssistant.jar
+      - name: Build APK with Gradle
+        run: gradle assembleDebug
 
-      - name: Upload Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Alrafeeq-App
-          path: AlrafeeqAssistant.jar
+          name: Alrafeeq-APK
+          path: app/build/outputs/apk/debug/*.apk
