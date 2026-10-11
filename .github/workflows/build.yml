@@ -19,12 +19,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK with Kotlinc
+      - name: Compile Kotlin App
         run: |
           ANDROID_JAR=$(find $ANDROID_HOME/platforms -name "android.jar" | sort -V | tail -n 1)
           kotlinc MainActivity.kt -cp "$ANDROID_JAR" -include-runtime -d AlrafeeqAssistant.jar
 
-      - name: Upload Output
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Alrafeeq-App
